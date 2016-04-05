@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2000 Shoichi Sakane <sakane@tanu.org>, All rights reserved.
+ * See the file LICENSE in the top level directory for more details.
+ */
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
@@ -32,6 +36,39 @@ static char *sep = " = ";
 static int f_tini_debug = 0;
 #endif
 
+struct tini_sect *
+tini_get_sect(struct tini_base *base, const char *section)
+{
+	int i;
+
+	if (base->n_sect == 0)
+		return NULL;
+
+	for (i = 0; i < base->n_sect; i++) {
+		if (strcmp(base->sect[i]->name, section) == 0)
+			return base->sect[i];
+	}
+
+	return NULL;
+}
+
+char *
+tini_get_v(struct tini_base *base, const char *s_sect, const char *s_key)
+{
+	struct tini_sect *sect;
+	int i;
+
+	if ((sect = tini_get_sect(base, s_sect)) == NULL)
+		return NULL;
+
+	for (i = 0; i < sect->n_kv; i++) {
+		if (strcmp(sect->kv[i]->key, s_key) == 0)
+			return sect->kv[i]->value;
+	}
+
+	return NULL;
+}
+
 /*
  * for reuse the database (e.g. reloading), it just clear it.
  * it doesn't free the memory pointed by "base".
@@ -49,8 +86,8 @@ tini_free(struct tini_base *base)
 		}
 		free(base->sect[i]);
 	}
-	base->n_sect = 0;
-	base->sect = NULL;
+	free(base->tini_file);
+	free(base);
 }
 
 static struct tini_base *
@@ -119,22 +156,6 @@ tini_new_sect(struct tini_base *base, const char *name)
 	base->n_sect = n;
 
 	return new[n - 1];
-}
-
-struct tini_sect *
-tini_get_sect(struct tini_base *base, const char *section)
-{
-	int i;
-
-	if (base->n_sect == 0)
-		return NULL;
-
-	for (i = 0; i < base->n_sect; i++) {
-		if (strcmp(base->sect[i]->name, section) == 0)
-			return base->sect[i];
-	}
-
-	return NULL;
 }
 
 static int
@@ -208,11 +229,11 @@ tini_parse_one(char *linebuf, int lineno, char **s, char **k, char **v)
  * so, before it is called, *base0 has to be cleared properly.
  */
 static int
-tini_parse_core(char *tini_file,
+tini_parse_core(const char *tini_file,
     struct tini_base **base0,
-    int (*handler)(int, int, char *, char *, char *))
+    int (*handler)(int, int, const char *, const char *, const char *))
 {
-	struct tini_base *base;
+	struct tini_base *base = NULL;
 	FILE *fp;
 	char *linebuf;
 	int max_size = TINI_LINE_SIZE;
@@ -224,9 +245,11 @@ tini_parse_core(char *tini_file,
 	int ret;
 
 	if (base0 != NULL) {
-		if ((*base0 = tini_new()) == NULL)
+		if ((base = tini_new()) == NULL)
 			err(1, "tini_new()");
-		base = *base0;
+		if ((base->tini_file = strdup(tini_file)) == NULL)
+			err(1, "strdup()");
+		*base0 = base;
 	}
 
 	if ((linebuf = malloc(max_size)) == NULL)
@@ -306,19 +329,21 @@ tini_print(struct tini_base *base)
 {
 	int i;
 
+	printf("tini_file: [%s]\n", base->tini_file);
 	for (i = 0; i < base->n_sect; i++)
 		tini_print_sect(base->sect[i]);
 }
 
 int
-tini_parse(char *tini_file, struct tini_base **base0)
+tini_parse(const char *tini_file, struct tini_base **base0)
 {
+	*base0 = NULL;
 	return tini_parse_core(tini_file, base0, NULL);
 }
 
 int
-tini_parse_cb(char *tini_file,
-    int (*handler)(int, int, char *, char *, char *))
+tini_parse_cb(const char *tini_file,
+    int (*handler)(int, int, const char *, const char *, const char *))
 {
 	return tini_parse_core(tini_file, NULL, handler);
 }

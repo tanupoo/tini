@@ -1,6 +1,6 @@
 TARGETS = test_tini
 OBJS = tini.o
 
-test_tini: $(OBJS)
+include Makefile.common
 
-include ../Makefile.common
+test_tini: $(OBJS)

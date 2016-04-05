@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2000 Shoichi Sakane <sakane@tanu.org>, All rights reserved.
+ * See the file LICENSE in the top level directory for more details.
+ */
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
@@ -22,7 +26,8 @@ usage()
 }
 
 int
-handler(int lineno, int flag, char *section, char *key, char *value)
+handler(int lineno, int flag,
+    const char *section, const char *key, const char *value)
 {
 	if (flag == TINI_FLAG_SECTION)
 		printf("    %4d:s:[%s]\n", lineno, section);
@@ -35,25 +40,42 @@ handler(int lineno, int flag, char *section, char *key, char *value)
 }
 
 void
-config_load(char *config_file, struct tini_base **base)
+config_load(const char *config_file, struct tini_base **base)
 {
 	if (tini_parse(config_file, base) < 0)
 		errx(1, "can't load %s", config_file);
 }
 
 void
-config_reload(char *config_file, struct tini_base **base)
+config_reload(const char *config_file, struct tini_base **base)
 {
 	tini_free(*base);
 	return config_load(config_file, base);
 }
 
 int
+test_get_v(struct tini_base *base, char *s, char *k)
+{
+	const char *v;
+
+	if ((v = tini_get_v(base, s, k)) == NULL)
+		printf("no value for %s\n", k);
+	else
+		printf("%s => %s\n", k, v);
+
+	return 0;
+}
+
+int
 run(char *config_file)
 {
 	struct tini_base *base;
+	char *s;
 
 	printf("=== parsing %s\n", config_file);
+
+	printf("--- tini_parse_cb().\n");
+	tini_parse_cb(config_file, handler);
 
 	printf("--- tini_parse()\n");
 	config_load(config_file, &base);
@@ -62,10 +84,18 @@ run(char *config_file)
 	printf("--- reloading.\n");
 	config_reload(config_file, &base);
 	tini_print(base);
-	tini_free(base);
 
-	printf("--- tini_parse_cb().\n");
-	tini_parse_cb(config_file, handler);
+	s = "output";
+	printf("sect %s: %p\n", s, tini_get_sect(base, s));
+	s = "keymap";
+	printf("sect %s: %p\n", s, tini_get_sect(base, s));
+	s = "none";
+	printf("sect %s: %p\n", s, tini_get_sect(base, s));
+	test_get_v(base, "keymap", "key1");
+	test_get_v(base, "keymap", "key2");
+	test_get_v(base, "keymap", "none");
+
+	tini_free(base);
 
 	return 0;
 }
