@@ -2,6 +2,7 @@ tini
 ====
 
 Tiny INI-like file parer and utility.
+You can see a sample code in test_ini.c.
 
 ## The file format and rules
 
@@ -35,7 +36,7 @@ See tini.h.
     int tini_parse_cb(const char *, int (*)(int, int, const char *, const char *, const char *));
     ~~~~
 
-## sample
+## sample of an INI file
 
     ~~~~
     #
