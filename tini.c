@@ -13,25 +13,6 @@
 
 static char *sep = " = ";
 
-/*
- * Tiny INI-like config file parer and utility.
- *
- * config format rules are:
- *  - one section at least must be defined.
- *  - any spaces ([\n\t\s]+) in the head of the line are removed.
- *  - any spaces in the tail of the value are removed.
- *
- *  under the above rules,
- *  - if the first charactor is '#', the line is ignored.
- *  - the line has only spaces, the line is ignored.
- *  - a section must begin '[' and close with ']'.
- *  - a key must not begin '['.
- *  - " = "(space-equal-space) must be placed between the key and value.
- *  - the value of null is allowed. only spaces are placed after the separator.
- *  - omitting the space following '=' is not allowed.
- *  - this parser doesn't check the duplication of key.
- */
-
 #ifdef DEBUG
 static int f_tini_debug = 0;
 #endif
