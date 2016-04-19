@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000 Shoichi Sakane <sakane@tanu.org>, All rights reserved.
+ * Copyright (C) 2010 Shoichi Sakane <sakane@tanu.org>, All rights reserved.
  * See the file LICENSE in the top level directory for more details.
  */
 #define TINI_LINE_SIZE 512
