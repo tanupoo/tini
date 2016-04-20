@@ -11,7 +11,7 @@
 
 #include "tini.h"
 
-#define SEP	" = "
+#define SEP	" ="
 
 static char *sep = SEP;
 
@@ -189,6 +189,19 @@ tini_parse_one(char *linebuf, int lineno, char **s, char **k, char **v)
 	/* found key and value */
 	**v = '\0';
 	*v = *v + strlen(sep);
+
+	/* removing any spaces in the head of the key */
+	bp = *v;
+	while (*bp == ' ' || *bp == '\t')
+		bp++;
+	if (*bp == '\n') {
+		/* null value */
+		**v = '\0';
+		return TINI_FLAG_KEYVALUE;
+	}
+	if (*bp == '\0')
+		err(1, "FATAL: there is no EOL. it should not happen.");
+	*v = bp;
 
 	/* removing any spaces in the tail */
 	bp = *v + strlen(*v);
