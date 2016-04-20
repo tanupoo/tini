@@ -11,7 +11,9 @@
 
 #include "tini.h"
 
-static char *sep = " = ";
+#define SEP	" = "
+
+static char *sep = SEP;
 
 #ifdef DEBUG
 static int f_tini_debug = 0;
@@ -180,7 +182,7 @@ tini_parse_one(char *linebuf, int lineno, char **s, char **k, char **v)
 	*k = bp;
 	*v = strstr(bp, sep);
 	if (*v == *k)
-		err(1, "ERROR: sep is NULL. it should not happen.");
+		err(1, "FATAL: sep is NULL. it should not happen.");
 	if (*v == NULL)
 		err(1, "ERROR: there is no separator in line %d", lineno);
 
