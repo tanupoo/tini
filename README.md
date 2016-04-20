@@ -21,13 +21,13 @@ You can see a sample code in test_ini.c.
 under the above rules,
 
 - after removing any spaces in the head of the line, if the first charactor in the line is '#', the line is ignored.
+- any charactors except '[', ']' and '=' are allowed for sector, key, and value.
 - at least one section must be defined. (*)
 - a section must begin '[' and close with ']'.
 - a key must not begin '['.
 - a key must not include " =".  it is dealt with a separator.
 - " ="(space-equal) must be placed between the key and value.
-- the value of null is allowed. only spaces are placed after the separator.
-- omitting the space following '=' is not allowed. (*)
+- the value of null is allowed.
 - this parser doesn't check the duplication of key.  just added to the result.
 
 ## TODO
@@ -89,7 +89,4 @@ you can see the following example in test.ini.
     [null value]
         this defines a null value =   
         note that there are spaces in the tail, next to the equal charactor = 	
-    
-    [null value, no space next to equal]
-        this happens error =
     ~~~~
