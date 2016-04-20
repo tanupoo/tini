@@ -4,16 +4,24 @@ tini
 Tiny INI-like file parer and utility.
 You can see a sample code in test_ini.c.
 
+## basic format
+
+    ~~~~
+    [section_1]
+    key1 = value1
+    key2 = value2
+    ~~~~
+
 ## The file format and rules
 
-- at least one section must be defined.
 - any spaces ([\n\t\s]+) in the head of the line are removed.
 - any spaces in the tail of the value are removed.
+- the line has only spaces, it is removed.
 
 under the above rules,
 
+- at least one section must be defined.
 - if the first charactor in the line is '#', the line is ignored.
-- the line has only spaces, the line is ignored.
 - a section must begin '[' and close with ']'.
 - a key must not begin '['.
 - " = "(space-equal-space) must be placed between the key and value.
@@ -38,6 +46,8 @@ See tini.h.
 
 ## sample of an INI file
 
+you can see the following example in test.ini.
+
     ~~~~
     #
     # this is test example for ini-like config tiny parser.
@@ -55,10 +65,22 @@ See tini.h.
     key1 = ke5b5d40d24f20663db986c80242456342c505fc9
     key2 = k9b34feefd03215bb6e4628d9ce07edd730fb321c
     
-    [null]
+    [any spaces in the key]
+    key1 = hoge
+    
+    [any spaces in section]
+    key3 = allowed.
+    
+    [ space at the head and tail. ]
+    how should it be = any comment ?
+    
+    [comment: tail of the value]
+    k = value # this is not a comment.
+    
+    [null value]
         this defines a null value =   
         note that there are spaces in the tail, next to the equal charactor = 	
     
-    #[error]
-    #    but, this happens error =
+    [null value, no space next to equal]
+        this happens error =
     ~~~~
