@@ -16,18 +16,27 @@ You can see a sample code in test_ini.c.
 
 - any spaces ([\n\t\s]+) in the head of the line are removed.
 - any spaces in the tail of the value are removed.
-- the line has only spaces, it is removed.
+- if the line has only spaces, it is removed.
 
 under the above rules,
 
-- at least one section must be defined.
-- if the first charactor in the line is '#', the line is ignored.
+- after removing any spaces in the head of the line, if the first charactor in the line is '#', the line is ignored.
+- at least one section must be defined. (*)
 - a section must begin '[' and close with ']'.
 - a key must not begin '['.
-- " = "(space-equal-space) must be placed between the key and value.
+- a key must not include " =".  it is dealt with a separator.
+- " ="(space-equal) must be placed between the key and value.
 - the value of null is allowed. only spaces are placed after the separator.
-- omitting the space following '=' is not allowed.
-- this parser doesn't check the duplication of key.
+- omitting the space following '=' is not allowed. (*)
+- this parser doesn't check the duplication of key.  just added to the result.
+
+## TODO
+
+- allow no space next to '=' as null value.
+
+## improvement idea
+
+- allow a pair of key-value with no section ?
 
 ## utility
 
