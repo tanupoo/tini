@@ -59,6 +59,9 @@ tini_free(struct tini_base *base)
 {
 	int i, j;
 
+	if (base == NULL)
+		return;
+
 	for (i = 0; i < base->n_sect; i++) {
 		free(base->sect[i]->name);
 		for (j = 0; j < base->sect[i]->n_kv; j++) {

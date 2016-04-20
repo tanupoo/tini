@@ -69,13 +69,14 @@ test_get_v(struct tini_base *base, char *s, char *k)
 int
 run(char *config_file)
 {
-	struct tini_base *base;
+	struct tini_base *base = NULL;
 	char *s;
 
 	printf("=== parsing %s\n", config_file);
 
 	printf("--- tini_parse_cb().\n");
 	tini_parse_cb(config_file, handler);
+	tini_free(base);
 
 	printf("--- tini_parse()\n");
 	config_load(config_file, &base);
