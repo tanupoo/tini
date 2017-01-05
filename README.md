@@ -2,7 +2,7 @@ tini
 ====
 
 Tiny INI-like file parer and utility.
-You can see a sample code in test_ini.c.
+You can see a sample code in test_tini.c.
 
 ## basic format
 
